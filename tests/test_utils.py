@@ -1,7 +1,7 @@
 import os
 import tempfile
 
-def setUp(self):
+def baseSetUp(self):
     # Create a temporary database file
     self.db_fd, self.db_path = tempfile.mkstemp()
     init_db(self.db_path)

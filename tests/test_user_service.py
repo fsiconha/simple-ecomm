@@ -4,7 +4,7 @@ from source.database import init_db
 from source.services import user_service
 
 class TestUserService(unittest.TestCase):
-    test_utils.setUp()
+    test_utils.baseSetUp()
     test_utils.tearDown()
 
     def test_register_user(self):
