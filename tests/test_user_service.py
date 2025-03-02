@@ -1,7 +1,7 @@
 import unittest
 import tests.test_utils as test_utils
-from source.database import init_db
-from source.services import user_service
+from src.database import init_db
+from src.services import user_service
 
 class TestUserService(unittest.TestCase):
     test_utils.baseSetUp()
