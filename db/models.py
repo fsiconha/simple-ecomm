@@ -1,5 +1,5 @@
-from dataclasses import dataclass
-from typing import Optional
+from dataclasses import dataclass, field
+from typing import Dict, Optional
 
 @dataclass
 class User:
@@ -19,12 +19,11 @@ class Product:
 class Cart:
     id: Optional[int]
     user_id: int
-    product_id: int
-    product_quantity: int
+    items: Dict[int, int] = field(default_factory=dict)
 
 @dataclass
 class Order:
     id: Optional[int]
     created_at: str
     user_id: int
-    cart_it: int
+    products: str  # JSON string containing products and quantities

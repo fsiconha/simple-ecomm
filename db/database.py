@@ -36,10 +36,8 @@ def init_db(db_path: str = str(DB_PATH)) -> None:
     CREATE TABLE IF NOT EXISTS carts (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER NOT NULL,
-        product_id INTEGER NOT NULL,
-        product_quantity INTEGER NOT NULL,
-        FOREIGN KEY(user_id) REFERENCES users(id),
-        FOREIGN KEY(product_id) REFERENCES products(id)
+        items TEXT NOT NULL,
+        FOREIGN KEY(user_id) REFERENCES users(id)
     )
     """)
     # Create ORDERS table
@@ -48,9 +46,8 @@ def init_db(db_path: str = str(DB_PATH)) -> None:
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         created_at TEXT NOT NULL,
         user_id INTEGER NOT NULL,
-        cart_id INTEGER NOT NULL,
-        FOREIGN KEY(user_id) REFERENCES users(id),
-        FOREIGN KEY(cart_id) REFERENCES carts(id)
+        products TEXT NOT NULL,
+        FOREIGN KEY(user_id) REFERENCES users(id)
     )
     """)
 
