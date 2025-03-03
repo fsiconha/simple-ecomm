@@ -1,59 +1,96 @@
 from flask import Blueprint, request, jsonify
 from src.services import order_service, user_service
+from db.models import Cart
 
 bp = Blueprint('orders', __name__, url_prefix='/orders')
 
 @bp.route('/view_cart', methods=['GET'])
 def view_cart():
-    user_id = request.args.get('user_id')
+    user_id = request.args.get("user_id")
+    cart_id = request.args.get("cart_id")
+    if not user_id or not cart_id:
+        return jsonify({"error": "Missing user_id or cart_id"}), 400
+
     try:
         user = user_service.get_user_by_id(int(user_id))
     except Exception:
-        return jsonify({'error': 'User not found'}), 400
-    cart_items = order_service.view_cart(user)
-    items = [
-        {
-            'id': item.id,
-            'product_id': item.product_id,
-            'quantity': item.quantity
-        } for item in cart_items
-    ]
-    return jsonify(items), 200
+        return jsonify({"error": "User not found"}), 400
+
+    # Create a dummy Cart object with the given cart_id.
+    dummy_cart = Cart(id=int(cart_id), user_id=user.id, items={})
+    try:
+        cart_items = order_service.view_cart(dummy_cart, user)
+        return jsonify(cart_items), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 
 @bp.route('/add_to_cart', methods=['POST'])
 def add_to_cart():
+    """
+    Adds products to the user's shopping cart.
+    Expects a JSON body with:
+    {
+        "user_id": int,
+        "items": [
+            {"product_id": int, "product_quantity": int},
+            ...
+        ]
+    }
+    """
     data = request.get_json()
-    user_id = data.get('user_id')
-    product_id = data.get('product_id')
-    quantity = data.get('quantity', 1)
+    user_id = data.get("user_id")
+    items = data.get("items")
+    
+    if not user_id or not items:
+        return jsonify({"error": "Missing user_id or items"}), 400
+
     try:
         user = user_service.get_user_by_id(int(user_id))
     except Exception:
-        return jsonify({'error': 'User not found'}), 400
+        return jsonify({"error": "User not found"}), 400
+
+    # Build the list of product tuples: (product_id, product_quantity)
+    products = []
+    for item in items:
+        pid = item.get("product_id")
+        qty = item.get("product_quantity")
+        if pid is None or qty is None:
+            return jsonify({"error": "Each item must have product_id and product_quantity"}), 400
+        products.append((pid, qty))
+    
     try:
-        cart_item = order_service.add_to_cart(user, product_id, quantity)
-        return jsonify(
-            {
-                'id': cart_item.id,
-                'product_id': cart_item.product_id,
-                'quantity': cart_item.quantity
-            }
-        ), 201
+        # add_to_cart returns an updated Cart object with id and items dict.
+        cart = order_service.add_to_cart(user, products)
+        return jsonify({
+            "cart_id": cart.id,
+            "user_id": cart.user_id,
+            "items": cart.items
+        }), 201
     except Exception as e:
-        return jsonify({'error': str(e)}), 400
+        return jsonify({"error": str(e)}), 400
 
 @bp.route('/order', methods=['POST'])
 def place_order():
     data = request.get_json()
-    user_id = data.get('user_id')
+    user_id = data.get("user_id")
+    cart_id = data.get("cart_id")
+    if not user_id or not cart_id:
+        return jsonify({"error": "Missing user_id or cart_id"}), 400
+
     try:
         user = user_service.get_user_by_id(int(user_id))
     except Exception:
-        return jsonify({'error': 'User not found'}), 400
+        return jsonify({"error": "User not found"}), 400
+
+    # Create a dummy Cart object for the given cart_id.
+    dummy_cart = Cart(id=int(cart_id), user_id=user.id, items={})
     try:
-        order = order_service.place_order(user)
-        return jsonify(
-            {'order_id': order.id, 'created_at': order.created_at}
-        ), 201
+        order = order_service.place_order(dummy_cart, user)
+        return jsonify({
+            "order_id": order.id,
+            "user_id": order.user_id,
+            "created_at": order.created_at,
+            "products": order.products
+        }), 201
     except Exception as e:
-        return jsonify({'error': str(e)}), 400
+        return jsonify({"error": str(e)}), 400
