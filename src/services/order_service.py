@@ -29,7 +29,6 @@ def add_to_cart(
     """
     conn = get_db_connection(db_path) if db_path else get_db_connection()
     cursor = conn.cursor()
-    
     # Check if the user already has a cart.
     cursor.execute("SELECT id, items FROM carts WHERE user_id = ?", (user.id,))
     row = cursor.fetchone()
@@ -45,7 +44,7 @@ def add_to_cart(
         )
         cart_id = cursor.lastrowid
         existing_items = {}
-    
+
     # Process each product.
     for product_id, product_quantity in products:
         # Verify that the product exists.
@@ -64,8 +63,7 @@ def add_to_cart(
     cursor.execute("UPDATE carts SET items = ? WHERE id = ?", (new_items_json, cart_id))
     conn.commit()
     conn.close()
-    
-    # Return a Cart dataclass instance with the aggregated items.
+
     return Cart(id=cart_id, user_id=user.id, items=existing_items)
 
 def view_cart(
@@ -91,11 +89,9 @@ def view_cart(
     
     if not row:
         return []
-    
     # The items column contains a JSON string, e.g., '{"101": 3, "102": 1}'
     items_dict = json.loads(row["items"])
-    
-    # Convert the dictionary into a list of dictionaries.
+
     return [
         {"product_id": int(pid), "product_quantity": qty} for pid, qty in items_dict.items()
     ]

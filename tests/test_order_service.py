@@ -63,9 +63,6 @@ class TestOrderService(unittest.TestCase):
         self.assertEqual(cart_items[0]['product_id'], self.product_1.id)
         self.assertEqual(cart_items[0]['product_quantity'], 3)
 
-        # cart_items = []
-        # order_service.clean_cart(cart_with_one_item, self.user, self.db_path)
-
         cart_with_two_items = self.cart_2
         cart_items = order_service.view_cart(
             cart=cart_with_two_items, user=self.user_2, db_path=self.db_path
