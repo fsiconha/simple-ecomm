@@ -27,4 +27,4 @@ class Order:
     id: Optional[int]
     created_at: str
     user_id: int
-    cart_it: int
+    products: str  # JSON string containing products and quantities
