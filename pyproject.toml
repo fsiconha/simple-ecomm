@@ -1,6 +1,7 @@
 [tool.poetry]
 name = "simple-ecomm"
 version = "0.0.1"
+package-mode = false
 description = "A simple e-commerce backend platform built with Flask and SQLite."
 authors = ["Felipe Siconha <felipesiconha@gmail.com>"]
 readme = "README.md"
