@@ -193,7 +193,7 @@ def place_order():
             products:
               type: string
               description: JSON string of ordered products.
-              example: "[{\"product_id\":101,\"product_quantity\":3}]"
+              example: "[{product_id: 101, product_quantity: 3}]"
       400:
         description: Error placing the order.
         schema:
