@@ -1,10 +1,10 @@
 from flask import Blueprint, request, jsonify
-from src.services import order_service, user_service
+from src.services import cart_service, user_service
 from db.models import Cart
 
-bp = Blueprint('orders', __name__, url_prefix='/orders')
+bp = Blueprint('cart', __name__, url_prefix='/cart')
 
-@bp.route('/view_cart', methods=['GET'])
+@bp.route('/view', methods=['GET'])
 def view_cart():
     user_id = request.args.get("user_id")
     cart_id = request.args.get("cart_id")
@@ -19,12 +19,12 @@ def view_cart():
     # Create a dummy Cart object with the given cart_id.
     dummy_cart = Cart(id=int(cart_id), user_id=user.id, items={})
     try:
-        cart_items = order_service.view_cart(dummy_cart, user)
+        cart_items = cart_service.view_cart(dummy_cart, user)
         return jsonify(cart_items), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
-@bp.route('/add_to_cart', methods=['POST'])
+@bp.route('/add', methods=['POST'])
 def add_to_cart():
     """
     Adds products to the user's shopping cart.
@@ -60,7 +60,7 @@ def add_to_cart():
     
     try:
         # add_to_cart returns an updated Cart object with id and items dict.
-        cart = order_service.add_to_cart(user, products)
+        cart = cart_service.add_to_cart(user, products)
         return jsonify({
             "cart_id": cart.id,
             "user_id": cart.user_id,
@@ -85,7 +85,7 @@ def place_order():
     # Create a dummy Cart object for the given cart_id.
     dummy_cart = Cart(id=int(cart_id), user_id=user.id, items={})
     try:
-        order = order_service.place_order(dummy_cart, user)
+        order = cart_service.place_order(dummy_cart, user)
         return jsonify({
             "order_id": order.id,
             "user_id": order.user_id,

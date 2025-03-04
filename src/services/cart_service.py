@@ -1,12 +1,11 @@
 import json
-import sqlite3
-from typing import List, Optional
+from typing import Optional
 from datetime import datetime
 from db.database import get_db_connection
 from db.models import Cart, Order, User
 from src.services.product_service import get_product_by_id
 
-class OrderServiceError(Exception):
+class CartServiceError(Exception):
     pass
 
 def add_to_cart(
@@ -50,7 +49,7 @@ def add_to_cart(
         # Verify that the product exists.
         product = get_product_by_id(product_id, db_path)
         if not product:
-            raise OrderServiceError("Product not found")
+            raise CartServiceError("Product not found")
         
         # Update the items dictionary.
         if product_id in existing_items:
@@ -131,7 +130,7 @@ def place_order(
     # Retrieve the cart items (expected to be a list of dictionaries with product_id and product_quantity)
     cart_items = view_cart(cart, user, db_path)
     if not cart_items:
-        raise OrderServiceError("Cart is empty")
+        raise CartServiceError("Cart is empty")
     # Serialize the cart items into a JSON string.
     products_json = json.dumps(cart_items)
 
