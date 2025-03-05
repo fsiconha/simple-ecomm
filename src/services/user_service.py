@@ -2,7 +2,7 @@ import sqlite3
 import hashlib
 from typing import Optional
 from db.database import get_db_connection
-from db.models import User
+from src.models import User
 
 class UserServiceError(Exception):
     pass
@@ -29,8 +29,10 @@ def register_user(
     conn = get_db_connection(db_path) if db_path else get_db_connection()
     cursor = conn.cursor()
     try:
-        cursor.execute("INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
-                       (username, hashed, role))
+        cursor.execute(
+            "INSERT INTO users (username, password, role) VALUES (?, ?, ?)",
+            (username, hashed, role)
+        )
         conn.commit()
         user_id = cursor.lastrowid
         return User(id=user_id, username=username, password=hashed, role=role)

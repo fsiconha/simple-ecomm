@@ -1,7 +1,7 @@
 import sqlite3
 from typing import List, Optional
 from db.database import get_db_connection
-from db.models import Product, User
+from src.models import Product, User
 
 class ProductServiceError(Exception):
     pass
