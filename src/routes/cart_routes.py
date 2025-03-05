@@ -145,11 +145,13 @@ def add_to_cart():
     try:
         # add_to_cart returns an updated Cart object with id and items dict.
         cart = cart_service.add_to_cart(user, products)
-        return jsonify({
-            "cart_id": cart.id,
-            "user_id": cart.user_id,
-            "items": cart.items
-        }), 201
+        return jsonify(
+            {
+              "cart_id": cart.id,
+              "user_id": cart.user_id,
+              "items": cart.items
+            }
+        ), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 

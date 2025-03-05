@@ -9,10 +9,10 @@ class CartServiceError(Exception):
     pass
 
 def add_to_cart(
-        user: User,
-        products: list[tuple[int, int]],
-        db_path: Optional[str] = None
-    ) -> Cart:
+    user: User,
+    products: list[tuple[int, int]],
+    db_path: Optional[str] = None
+) -> Cart:
     """
     Adds products to the user's shopping cart.
     
@@ -23,11 +23,11 @@ def add_to_cart(
     :param user: The user adding products to the cart.
     :param products: A list of tuples where each tuple is (product_id, product_quantity).
     :param db_path: Optional path to the SQLite database.
-
-    :return: A Cart object with a cart_id and an items dictionary mapping product_id to product_quantity.
+    :return: A Cart object with a cart_id and an items dictionary mapping product_id (as string) to product_quantity.
     """
     conn = get_db_connection(db_path) if db_path else get_db_connection()
     cursor = conn.cursor()
+    
     # Check if the user already has a cart.
     cursor.execute("SELECT id, items FROM carts WHERE user_id = ?", (user.id,))
     row = cursor.fetchone()
@@ -49,13 +49,16 @@ def add_to_cart(
         # Verify that the product exists.
         product = get_product_by_id(product_id, db_path)
         if not product:
-            raise CartServiceError("Product not found")
-        # Update the items dictionary.
-        if product_id in existing_items:
-            existing_items[product_id] += product_quantity
+            conn.close()
+            raise CartServiceError(f"Product with id {product_id} not found")
+        
+        # Convert product_id to a string to ensure consistent key types.
+        key = str(product_id)
+        if key in existing_items:
+            existing_items[key] += product_quantity
         else:
-            existing_items[product_id] = product_quantity
-    
+            existing_items[key] = product_quantity
+
     # Update the cart row with the new items JSON.
     new_items_json = json.dumps(existing_items)
     cursor.execute(
