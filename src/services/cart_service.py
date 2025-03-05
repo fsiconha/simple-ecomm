@@ -50,7 +50,6 @@ def add_to_cart(
         product = get_product_by_id(product_id, db_path)
         if not product:
             raise CartServiceError("Product not found")
-        
         # Update the items dictionary.
         if product_id in existing_items:
             existing_items[product_id] += product_quantity
@@ -59,7 +58,10 @@ def add_to_cart(
     
     # Update the cart row with the new items JSON.
     new_items_json = json.dumps(existing_items)
-    cursor.execute("UPDATE carts SET items = ? WHERE id = ?", (new_items_json, cart_id))
+    cursor.execute(
+        "UPDATE carts SET items = ? WHERE id = ? AND user_id = ?",
+        (new_items_json, cart_id, user.id)
+    )
     conn.commit()
     conn.close()
 

@@ -141,7 +141,7 @@ def add_to_cart():
         if pid is None or qty is None:
             return jsonify({"error": "Each item must have product_id and product_quantity"}), 400
         products.append((pid, qty))
-    
+
     try:
         # add_to_cart returns an updated Cart object with id and items dict.
         cart = cart_service.add_to_cart(user, products)
