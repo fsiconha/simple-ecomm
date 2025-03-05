@@ -4,7 +4,7 @@ from src.services import product_service, user_service
 bp = Blueprint('products', __name__, url_prefix='/products')
 
 @bp.route('', methods=['GET'])
-def get_products():
+def get_all_products():
     """
     Retrieve a list of all products.
     ---

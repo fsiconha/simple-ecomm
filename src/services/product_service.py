@@ -56,7 +56,9 @@ def edit_product(
     :return: Updated Product object
     """
     if admin_user.role != "admin":
-        raise ProductServiceError("Unauthorized: Only admins can edit products")
+        raise ProductServiceError(
+            "Unauthorized: Only admins can edit products"
+        )
     conn = get_db_connection(db_path) if db_path else get_db_connection()
     cursor = conn.cursor()
     # Fetch current product details
@@ -93,7 +95,9 @@ def delete_product(
     :param product_id: ID of the product to delete
     """
     if admin_user.role != "admin":
-        raise ProductServiceError("Unauthorized: Only admins can delete products")
+        raise ProductServiceError(
+            "Unauthorized: Only admins can delete products"
+        )
     conn = get_db_connection(db_path) if db_path else get_db_connection()
     cursor = conn.cursor()
     cursor.execute("DELETE FROM products WHERE id = ?", (product_id,))
@@ -114,7 +118,10 @@ def get_product_by_id(
     conn.close()
     if row:
         return Product(
-            id=row["id"], name=row["name"], description=row["description"], price=row["price"]
+            id=row["id"],
+            name=row["name"],
+            description=row["description"],
+            price=row["price"]
         )
     return None
 
@@ -125,4 +132,11 @@ def get_all_products(db_path: Optional[str] = None) -> List[Product]:
     rows = cursor.fetchall()
     conn.close()
 
-    return [Product(id=row["id"], name=row["name"], description=row["description"], price=row["price"]) for row in rows]
+    return [
+        Product(
+            id=row["id"],
+            name=row["name"],
+            description=row["description"],
+            price=row["price"]
+        ) for row in rows
+    ]
