@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from src.services import cart_service, user_service
-from db.models import Cart
+from src.models import Cart
 
 bp = Blueprint('cart', __name__, url_prefix='/cart')
 
@@ -139,7 +139,11 @@ def add_to_cart():
         pid = item.get("product_id")
         qty = item.get("product_quantity")
         if pid is None or qty is None:
-            return jsonify({"error": "Each item must have product_id and product_quantity"}), 400
+            return jsonify(
+                {
+                  "error": "Each item must have product_id and product_quantity"
+                }
+              ), 400
         products.append((pid, qty))
 
     try:

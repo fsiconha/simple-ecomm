@@ -2,7 +2,7 @@ import json
 from typing import Optional
 from datetime import datetime
 from db.database import get_db_connection
-from db.models import Cart, Order, User
+from src.models import Cart, Order, User
 from src.services.product_service import get_product_by_id
 
 class CartServiceError(Exception):
@@ -29,7 +29,10 @@ def add_to_cart(
     cursor = conn.cursor()
     
     # Check if the user already has a cart.
-    cursor.execute("SELECT id, items FROM carts WHERE user_id = ?", (user.id,))
+    cursor.execute(
+        "SELECT id, items FROM carts WHERE user_id = ?",
+        (user.id,)
+    )
     row = cursor.fetchone()
     if row:
         cart_id = row["id"]
@@ -97,7 +100,10 @@ def view_cart(
     items_dict = json.loads(row["items"])
 
     return [
-        {"product_id": int(pid), "product_quantity": qty} for pid, qty in items_dict.items()
+        {
+            "product_id": int(pid),
+            "product_quantity": qty
+        } for pid, qty in items_dict.items()
     ]
 
 def clean_cart(
