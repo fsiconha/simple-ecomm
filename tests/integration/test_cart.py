@@ -61,23 +61,25 @@ class CartIntegrationTests(unittest.TestCase):
 
         # Admin adds six products.
         self.product_ids = []
+        i = 0
         for i in range(6):
             product_data = {
                 "user_id": self.mock_admin_user.id,
-                "name": f"Product {i+1}",
-                "description": f"Description {i+1}",
+                "name": f"Product {i}",
+                "description": f"Description {i}",
                 "price": (i+1) * 10.0
             }
             prod_resp = self.client.post('/products/add', json=product_data)
             self.assertEqual(prod_resp.status_code, 201)
             prod = json.loads(prod_resp.data)
             self.product_ids.append(prod['id'])
+            i+1
 
     def tearDown(self):
         os.close(self.db_fd)
         os.unlink(self.db_path)
 
-    def test_buy_flow(self):
+    def test_shopping_journey(self):
         # 1. Regular user views list of products.
         resp_products = self.client.get('/products')
         self.assertEqual(resp_products.status_code, 200)
@@ -102,13 +104,13 @@ class CartIntegrationTests(unittest.TestCase):
 
         # 3. Regular user places an order using the cart.
         order_resp = self.client.post('/cart/order', json={
-            "user_id": self.mock_admin_user.id,
+            "user_id": self.mock_regular_user.id,
             "cart_id": cart_id
         })
         self.assertEqual(order_resp.status_code, 201)
         order = json.loads(order_resp.data)
         self.assertIn("order_id", order)
-        self.assertEqual(order["user_id"], self.mock_admin_user.id)
+        self.assertEqual(order["user_id"], self.mock_regular_user.id)
         
         # The order's "products" field is expected to be a JSON string representing
         # the list of ordered products. Let's verify it.
