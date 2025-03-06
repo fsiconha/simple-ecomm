@@ -30,13 +30,19 @@ This project uses **Poetry** to dependencies management. But alternatively, you 
 $ git clone https://github.com/fsiconha/simple-ecomm.git
 $ cd simple-ecomm
 $ pip install poetry
-$ poetry env use python
+$ poetry env use python3
+$ poetry env activate
 $ poetry install
 ```
 
 #### Run Unit Tests
 ```
-$ poetry run python3 run_tests.py
+$ poetry run python3 run_unit_tests.py
+```
+
+#### Run Integration Tests
+```
+$ poetry run python3 run_integration_tests.py
 ```
 
 #### Start App
@@ -63,7 +69,12 @@ $ pip install -r requirements.txt
 
 #### Run Unit Tests
 ```
-$ python3 run_tests.py
+$ python3 run_unit_tests.py
+```
+
+#### Run Integration Tests
+```
+$ python3 run_integration_tests.py
 ```
 
 #### Start App
