@@ -9,7 +9,7 @@ homepage = "https://github.com/fsiconha"
 repository = "https://github.com/fsiconha/simple-ecomm"
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = "^3.9"
 Flask = "^2.0.0"
 flasgger = "^0.9.7.1"
 
